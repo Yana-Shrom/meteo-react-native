@@ -1,4 +1,8 @@
-const API_KEY = "4a559d3ed3b12d7562d4b83c7189a13c";
+import { API_KEY } from "@env";
+
+if (!API_KEY) {
+  throw new Error("Ajoute API_KEY dans le fichier .env");
+}
 
 async function fetchJson(url) {
   const res = await fetch(url);
@@ -17,7 +21,7 @@ export const getCityName = async (lat, lon) => {
 };
 
 export const getWeatherData = async (lat, lon) => {
-  
+
   const [currentRes, forecastRes] = await Promise.all([
     fetchJson(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
