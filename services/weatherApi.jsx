@@ -17,8 +17,30 @@ export const getCityName = async (lat, lon) => {
 };
 
 export const getWeatherData = async (lat, lon) => {
-  return fetchJson(
-    `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
-  );
+  
+  const [currentRes, forecastRes] = await Promise.all([
+    fetchJson(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
+    ),
+    fetchJson(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=fr&appid=${API_KEY}`
+    ),
+  ]);
+
+  const current = {
+    temp: currentRes?.main?.temp,
+    weather: currentRes?.weather ?? [],
+    dt: currentRes?.dt,
+  };
+
+  const hourly = Array.isArray(forecastRes?.list)
+    ? forecastRes.list.map((item) => ({
+        dt: item.dt,
+        temp: item.main?.temp,
+        weather: item.weather,
+      }))
+    : [];
+
+  return { current, hourly };
 };
 
