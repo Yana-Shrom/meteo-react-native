@@ -14,19 +14,27 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.warn("Location permission not granted");
+          return;
+        }
 
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
 
-      const cityName = await getCityName(latitude, longitude);
-      const weatherData = await getWeatherData(latitude, longitude);
+        const cityName = await getCityName(latitude, longitude);
+        const weatherData = await getWeatherData(latitude, longitude);
 
-      setCity(cityName);
-      setCurrent(weatherData.current);
-      setHourly(weatherData.hourly.slice(0, 40)); 
-      setLoading(false);
+        setCity(cityName);
+        setCurrent(weatherData.current);
+        setHourly(weatherData.hourly.slice(0, 40));
+      } catch (error) {
+        console.error("Failed to load weather:", error);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
