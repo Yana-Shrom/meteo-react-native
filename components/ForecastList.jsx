@@ -10,7 +10,7 @@ export default function ForecastList({ data }) {
     <FlatList
       horizontal
       data={filteredData}
-      keyExtractor={(item) => item.dt?.toString?.() ?? Math.random().toString()}
+      keyExtractor={(item) => item.dt?.toString?.() ?? Math.random(item.temp).toString()}
       renderItem={({ item }) => <ForecastItem item={item} />}
       showsHorizontalScrollIndicator={false}
     />
