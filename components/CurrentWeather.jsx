@@ -1,19 +1,23 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 
 export default function CurrentWeather({ city, data }) {
+  if (!data) return null;
+
+  const icon = data?.weather?.[0]?.icon;
+  const tempText = typeof data?.temp === "number" ? `${Math.round(data.temp)}°C` : "--";
+  const desc = data?.weather?.[0]?.description ?? "";
+
   return (
     <View style={styles.container}>
       <Text style={styles.city}>{city}</Text>
-      <Image
-        style={styles.icon}
-        source={{
-          uri: `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`,
-        }}
-      />
-      <Text style={styles.temp}>{Math.round(data.temp)}°C</Text>
-      <Text style={styles.desc}>
-        {data.weather[0].description}
-      </Text>
+      {icon ? (
+        <Image
+          style={styles.icon}
+          source={{ uri: `https://openweathermap.org/img/wn/${icon}@4x.png` }}
+        />
+      ) : null}
+      <Text style={styles.temp}>{tempText}</Text>
+      <Text style={styles.desc}>{desc}</Text>
     </View>
   );
 }

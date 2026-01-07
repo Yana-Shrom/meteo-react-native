@@ -1,21 +1,28 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 
 export default function ForecastItem({ item }) {
-  const date = new Date(item.dt * 1000).toLocaleString("fr-FR", {
+  if (!item) return null;
+
+  const dt = item.dt ?? item?.time ?? null;
+  const date = dt ? new Date(dt * 1000).toLocaleString("fr-FR", {
     day: "2-digit",
     hour: "2-digit",
-  });
+  }) : "";
+
+  const icon = item?.weather?.[0]?.icon;
+  const tempValue = typeof item?.temp === "number" ? item.temp : item?.temp?.day;
+  const tempText = typeof tempValue === "number" ? `${Math.round(tempValue)}°C` : "--";
 
   return (
     <View style={styles.card}>
       <Text>{date}</Text>
-      <Image
-        style={styles.icon}
-        source={{
-          uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-        }}
-      />
-      <Text>{Math.round(item.temp)}°C</Text>
+      {icon ? (
+        <Image
+          style={styles.icon}
+          source={{ uri: `https://openweathermap.org/img/wn/${icon}@2x.png` }}
+        />
+      ) : null}
+      <Text>{tempText}</Text>
     </View>
   );
 }

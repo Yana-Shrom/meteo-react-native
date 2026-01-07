@@ -27,9 +27,17 @@ export default function App() {
         const cityName = await getCityName(latitude, longitude);
         const weatherData = await getWeatherData(latitude, longitude);
 
-        setCity(cityName);
-        setCurrent(weatherData.current);
-        setHourly(weatherData.hourly.slice(0, 40));
+        setCity(cityName ?? "");
+        setCurrent(weatherData?.current ?? null);
+
+        if (weatherData?.hourly && Array.isArray(weatherData.hourly)) {
+          setHourly(weatherData.hourly.slice(0, 40));
+        } else if (weatherData?.daily && Array.isArray(weatherData.daily)) {
+          setHourly(weatherData.daily);
+        } else {
+          setHourly([]);
+          console.warn("Unexpected weatherData shape:", weatherData);
+        }
       } catch (error) {
         console.error("Failed to load weather:", error);
       } finally {
